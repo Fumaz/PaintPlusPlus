@@ -12,6 +12,7 @@ const int CANVAS_WIDTH = WIDTH;
 const int CANVAS_HEIGHT = HEIGHT - 50;
 
 const int PALETTE_SIZE = 40;
+const int RAINBOW_MAX = 500;
 
 bool inCanvas(int x, int y) {
     return x >= 0 && y >= 0 && x < CANVAS_WIDTH && y < CANVAS_HEIGHT;
@@ -250,6 +251,30 @@ void redo(Image *image) {
     redoHistory.pop();
 }
 
+Color rainbow(double ratio) {
+    cout << "ratio " << ratio << endl;
+    int normalized = int(ratio * 256 * 6);
+    cout << "normalized " << normalized << endl;
+
+    int x = normalized % 256;
+
+    cout << "x " << x << endl;
+
+    int red = 0, green = 0, blue = 0;
+    switch(normalized / 256)
+    {
+        case 0: red = 255; green = x; blue = 0;       break;//red
+        case 1: red = 255 - x; green = 255; blue = 0;       break;//yellow
+        case 2: red = 0; green = 255; blue = x;       break;//green
+        case 3: red = 0; green = 255 - x; blue = 255;     break;//cyan
+        case 4: red = x; green = 0; blue = 255;     break;//blue
+        case 5: red = 255; green = 0; blue = 255 - x; break;//magenta
+    }
+
+    cout << "r " << red << " g " << green << " b " << blue << endl;
+    return Color(red, green, blue);
+}
+
 int main() {
     RenderWindow window(VideoMode(WIDTH, HEIGHT), "Paint",
                         Style::Titlebar | Style::Close);
@@ -261,6 +286,7 @@ int main() {
 
     bool rainbowBrush = false;
     bool focused = true;
+    double ratio = 0;
 
     texture.create(CANVAS_WIDTH, CANVAS_HEIGHT);
     image.create(CANVAS_WIDTH, CANVAS_HEIGHT, Color::White);
@@ -344,10 +370,13 @@ int main() {
             }
         }
 
-        if (rainbowBrush && clock.getElapsedTime().asMilliseconds() % 10 == 0) {
-            Color color = Color(rand() % 256, rand() % 256, rand() % 256);
-
+        if (rainbowBrush) {
+            Color color = rainbow(ratio / RAINBOW_MAX);
             leftBrush.color = color;
+
+            ratio++;
+
+            if (ratio >= RAINBOW_MAX) ratio = 0;
         }
 
         window.clear(Color::White);
