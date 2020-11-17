@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <stack>
+#include <iostream>
 
 using namespace std;
 using namespace sf;
@@ -259,6 +260,7 @@ int main() {
     Brush rightBrush(Color::White, 10);
 
     bool rainbowBrush = false;
+    bool focused = true;
 
     texture.create(CANVAS_WIDTH, CANVAS_HEIGHT);
     image.create(CANVAS_WIDTH, CANVAS_HEIGHT, Color::White);
@@ -275,7 +277,12 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
                 window.close();
-            } else if (event.type == Event::MouseButtonPressed) {
+            } else if (event.type == Event::GainedFocus) {
+                focused = true;
+            } else if (event.type == Event::LostFocus) {
+                focused = false;
+            }
+            else if (event.type == Event::MouseButtonPressed) {
                 if (event.mouseButton.button == Mouse::Button::Left) {
                     int x = event.mouseButton.x;
                     int y = event.mouseButton.y;
@@ -321,17 +328,19 @@ int main() {
             }
         }
 
-        if (Mouse::isButtonPressed(Mouse::Button::Left)) {
-            leftBrush.draw(&image, Mouse::getPosition(window).x, Mouse::getPosition(window).y);
-        } else if (Mouse::isButtonPressed(Mouse::Button::Right)) {
-            rightBrush.draw(&image, Mouse::getPosition(window).x, Mouse::getPosition(window).y);
-        }
+        if (focused) {
+            if (Mouse::isButtonPressed(Mouse::Button::Left)) {
+                leftBrush.draw(&image, Mouse::getPosition(window).x, Mouse::getPosition(window).y);
+            } else if (Mouse::isButtonPressed(Mouse::Button::Right)) {
+                rightBrush.draw(&image, Mouse::getPosition(window).x, Mouse::getPosition(window).y);
+            }
 
-        if (Keyboard::isKeyPressed(Keyboard::LControl)) {
-            if (Keyboard::isKeyPressed(Keyboard::Z)) {
-                undo(&image);
-            } else if (Keyboard::isKeyPressed(Keyboard::R)) {
-                redo(&image);
+            if (Keyboard::isKeyPressed(Keyboard::LControl)) {
+                if (Keyboard::isKeyPressed(Keyboard::Z)) {
+                    undo(&image);
+                } else if (Keyboard::isKeyPressed(Keyboard::R)) {
+                    redo(&image);
+                }
             }
         }
 
