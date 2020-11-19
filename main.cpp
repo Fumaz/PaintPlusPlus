@@ -252,26 +252,44 @@ void redo(Image *image) {
 }
 
 Color rainbow(double ratio) {
-    cout << "ratio " << ratio << endl;
     int normalized = int(ratio * 256 * 6);
-    cout << "normalized " << normalized << endl;
 
     int x = normalized % 256;
 
-    cout << "x " << x << endl;
-
     int red = 0, green = 0, blue = 0;
-    switch(normalized / 256)
-    {
-        case 0: red = 255; green = x; blue = 0;       break;//red
-        case 1: red = 255 - x; green = 255; blue = 0;       break;//yellow
-        case 2: red = 0; green = 255; blue = x;       break;//green
-        case 3: red = 0; green = 255 - x; blue = 255;     break;//cyan
-        case 4: red = x; green = 0; blue = 255;     break;//blue
-        case 5: red = 255; green = 0; blue = 255 - x; break;//magenta
+    switch (normalized / 256) {
+        case 0:
+            red = 255;
+            green = x;
+            blue = 0;
+            break;//red
+        case 1:
+            red = 255 - x;
+            green = 255;
+            blue = 0;
+            break;//yellow
+        case 2:
+            red = 0;
+            green = 255;
+            blue = x;
+            break;//green
+        case 3:
+            red = 0;
+            green = 255 - x;
+            blue = 255;
+            break;//cyan
+        case 4:
+            red = x;
+            green = 0;
+            blue = 255;
+            break;//blue
+        case 5:
+            red = 255;
+            green = 0;
+            blue = 255 - x;
+            break;//magenta
     }
 
-    cout << "r " << red << " g " << green << " b " << blue << endl;
     return Color(red, green, blue);
 }
 
@@ -307,8 +325,7 @@ int main() {
                 focused = true;
             } else if (event.type == Event::LostFocus) {
                 focused = false;
-            }
-            else if (event.type == Event::MouseButtonPressed) {
+            } else if (event.type == Event::MouseButtonPressed) {
                 if (event.mouseButton.button == Mouse::Button::Left) {
                     int x = event.mouseButton.x;
                     int y = event.mouseButton.y;
